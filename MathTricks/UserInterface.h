@@ -9,12 +9,15 @@
 * @idnumber 7MI0600424
 * @compiler VC
 *
-* Header: Definitions of User Interface Functions
+* Header: MathTricks definitions of User Interface Functions
 *
 */
 
-#include "UserInterface.h"
+#pragma once
 
-int main() {
-	MathTricks();
-}
+#include <iostream>#pragma once
+#include <iomanip>#pragma once
+
+void MathTricks();
+void printCentered(const char* text);
+int getlen(const char* text);
