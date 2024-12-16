@@ -1,1 +1,1 @@
-# MathTricks---UP
+# MathTricks-UP
