@@ -9,7 +9,7 @@
 * @idnumber 7MI0600424
 * @compiler VC
 *
-* Header: MathTricks definitions of User Interface Functions
+* Header: MathTricks definitions of Board Functions
 *
 */
 
@@ -18,6 +18,4 @@
 #include <iostream>#pragma once
 #include <iomanip>#pragma once
 
-void MathTricks();
-void mainMenu();
-void newGameMenu();
+void drawBoard(unsigned width, unsigned height);

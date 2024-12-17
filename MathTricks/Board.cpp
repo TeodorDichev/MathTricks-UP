@@ -9,15 +9,17 @@
 * @idnumber 7MI0600424
 * @compiler VC
 *
-* Header: MathTricks definitions of User Interface Functions
+* Header: MathTricks Board Functions
 *
 */
 
-#pragma once
+#include "UserInterface.h";
+#include "Constants.h";
+#include "Board.h";
+#include <iostream>;
+#include "HelperFunctions.h";
 
-#include <iostream>#pragma once
-#include <iomanip>#pragma once
 
-void MathTricks();
-void mainMenu();
-void newGameMenu();
+void drawBoard(unsigned width, unsigned height) {
+
+}

@@ -9,7 +9,7 @@
 * @idnumber 7MI0600424
 * @compiler VC
 *
-* Header: MathTricks definitions of User Interface Functions
+* Header: MathTricks definitions of Helper Functions
 *
 */
 
@@ -18,6 +18,7 @@
 #include <iostream>#pragma once
 #include <iomanip>#pragma once
 
-void MathTricks();
-void mainMenu();
-void newGameMenu();
+void printCentered(const char* text);
+unsigned getLength(const char* text);
+bool isDigit(char ch);
+unsigned stringToUnsignedInteger(const char* numberString);
