@@ -1,4 +1,4 @@
-/**
+/*
 *
 * Solution to course project # 2
 * Introduction to programming course
