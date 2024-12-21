@@ -17,6 +17,7 @@
 
 #include <iostream>#pragma once
 #include <iomanip>#pragma once
+#include "Constants.h";
 
 void printCentered(const char* text);
 unsigned getLength(const char* text);

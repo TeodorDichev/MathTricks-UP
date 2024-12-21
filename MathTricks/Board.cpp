@@ -13,12 +13,7 @@
 *
 */
 
-#include "UserInterface.h";
-#include "Constants.h";
 #include "Board.h";
-#include <iostream>;
-#include "HelperFunctions.h";
-
 
 void drawBoard(unsigned width, unsigned height) {
 

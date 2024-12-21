@@ -14,9 +14,7 @@
 */
 
 #include "UserInterface.h";
-#include "Constants.h";
-#include <iostream>;
-#include "HelperFunctions.h";
+
 
 void MathTricks() {
     printCentered("Welcome to MathTricks\n");

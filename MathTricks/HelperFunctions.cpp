@@ -14,8 +14,6 @@
 */
 
 #include "HelperFunctions.h";
-#include "Constants.h";
-#include <iostream>;
 
 void printCentered(const char* text) {
     int length = 0;

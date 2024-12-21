@@ -15,8 +15,10 @@
 
 #pragma once
 
-#include <iostream>#pragma once
-#include <iomanip>#pragma once
+#include <iostream>
+#include <iomanip>
+#include "Constants.h";
+#include "HelperFunctions.h";
 
 void MathTricks();
 void mainMenu();

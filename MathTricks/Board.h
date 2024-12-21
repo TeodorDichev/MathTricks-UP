@@ -15,7 +15,10 @@
 
 #pragma once
 
-#include <iostream>#pragma once
-#include <iomanip>#pragma once
+#include <iostream>
+#include <iomanip>
+#include "Constants.h";
+#include "HelperFunctions.h";
+#include "UserInterface.h";
 
 void drawBoard(unsigned width, unsigned height);
