@@ -16,105 +16,96 @@
 #include "UserInterface.h";
 
 
-void MathTricks() {
-    printCentered("Welcome to MathTricks\n");
-    printCentered("The game is created as a project for the course Introduction to Programming\n");
-    printCentered("Press c to continue and q to quit\n");
+void mathTricks() {
+    std::cout << "Welcome to MathTricks\n" <<
+    "The game is created as a project for the course Introduction to Programming\n" <<
+    "Press c to continue and q to quit\n";
 
     std::cout << std::endl;
 
-    char* input = new char[1024] ;
+    char input[MAX_SIZE]; // using static memory -> auto clear after method
 
     do {
-        printCentered(" ");
-
-        std::cin.getline(input, 1024);
+        std::cin.getline(input, MAX_SIZE);
+        std::cin.clear();
 
         if (getLength(input) != 1)
-            printCentered("Invalid input, please try again\n");
-        else if (*input == QUIT_SYMBOL) {
-            delete[] input;
+            std::cout << "Invalid input, please try again\n";
+        else if (*input == QUIT_SYMBOL)
             return;
-        }
         else if (*input == CONTINUE_GAME_SYMBOL) {
-            delete[] input;
             mainMenu();
             return;
         }
         else
-            printCentered("Invalid input, please try again\n");
+            std::cout << "Invalid input, please try again\n";
 
-        std::cin.clear();
-
-    } while (*input != '\0');
+    } while (true);
 }
 
 void mainMenu() {
     std::cout << std::endl;
-    printCentered("Main menu\n");
-    printCentered("Press n for a new game, press c to continue, press q to quit\n");
-    printCentered("The game is played using the numberPad:\n");
-    printCentered("Press 1 to move down diagonally left\n");
-    printCentered("Press 2 to move down\n");
-    printCentered("Press 3 to move down diagonally right\n");
-    printCentered("Press 4 to move left\n");
-    printCentered("Press 6 to move right\n");
-    printCentered("Press 7 to move up diagonally left\n");
-    printCentered("Press 8 to move up\n");
-    printCentered("Press 9 to move up diagonally right\n");
-    printCentered("While playing press m to go back to the main menu\n");
+    std::cout << "Main menu\n\n" <<
+    "Press n for a new game, press c to continue, press q to quit\n" <<
+    "The game is played using the numberPad:\n" <<
+    "Press 1 to move down diagonally left\n" <<
+    "Press 2 to move down\n" <<
+    "Press 3 to move down diagonally right\n" <<
+    "Press 4 to move left\n" <<
+    "Press 6 to move right\n" <<
+    "Press 7 to move up diagonally left\n" <<
+    "Press 8 to move up\n" <<
+    "Press 9 to move up diagonally right\n" <<
+    "While playing press m to go back to the main menu\n\n";
 
-    std::cout << std::endl;
-
-    char* input = new char[1024];
+    char input[MAX_SIZE]; // using static memory -> auto clear after method
 
     do {
-        printCentered(" ");
-
-        std::cin.getline(input, 1024);
+        std::cin.getline(input, MAX_SIZE);
+        std::cin.clear();
 
         if (getLength(input) != 1)
-            printCentered("Invalid input, please try again\n");
-        else if (*input == QUIT_SYMBOL) {
-            delete[] input;
+            std::cout << "Invalid input, please try again\n";
+        else if (*input == QUIT_SYMBOL)
             return;
-        }
         else if (*input == NEW_GAME_SYMBOL) {
-            delete[] input;
             newGameMenu();
             return;
         }
-        else if (*input == CONTINUE_GAME_SYMBOL) {
-            delete[] input;
+        else if (*input == CONTINUE_GAME_SYMBOL)
             return;
-        }
         else
-            printCentered("Invalid input, please try again\n");
+            std::cout << "Invalid input, please try again\n";
 
-        std::cin.clear();
-
-    } while (*input != '\0');
+    } while (true);
 }
 
 void newGameMenu() {
     std::cout << std::endl;
-    system("cls");
-    printCentered("Enter grid dimensions [4 - 16]");
+    system(CLEAR_CONSOLE_CMD);
+    std::cout << "Enter grid dimensions [4 - 16]\n";
 
-    char* input = new char[1024];
+    char input[MAX_SIZE]; // using static memory -> auto clear after method
 
     do {
-        printCentered("Width: ");
-
-        std::cin.getline(input, 1024);
-
-        if (getLength(input) < 1 && getLength(input) > 2)
-            printCentered("Invalid input, please try again\n");
-        else
-            printCentered("Invalid input, please try again\n");
-
+        std::cout << "Width: ";
+        std::cin.getline(input, MAX_SIZE);
         std::cin.clear();
+        unsigned width = myAtoi(input);
 
-    } while (*input != '\0');
+        std::cout << "Height: ";
+        std::cin.getline(input, MAX_SIZE);
+        std::cin.clear();
+        unsigned height = myAtoi(input);
+
+        if (width < 4 || width > 16 || height < 4 || height > 16)
+            std::cout << "Invalid input, please try again\n";
+        else
+        {
+            drawBoard(width, height);
+            return;
+        }
+
+    } while (true);
 
 }

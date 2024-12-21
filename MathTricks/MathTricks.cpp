@@ -16,5 +16,5 @@
 #include "UserInterface.h"
 
 int main() {
-	MathTricks();
+	mathTricks();
 }

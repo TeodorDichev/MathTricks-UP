@@ -15,16 +15,6 @@
 
 #include "HelperFunctions.h";
 
-void printCentered(const char* text) {
-    int length = 0;
-    while (text[length]) {
-        length++;
-    }
-
-    int padding = (CONSOLE_WIDTH - length) / 2;
-    std::cout << std::setw(padding + length) << text;
-}
-
 unsigned getLength(const char* text) {
 	if (!text)
 		return 0;
@@ -37,26 +27,44 @@ unsigned getLength(const char* text) {
 	return index;
 }
 
-bool isDigit(char ch) {
-	return '0' <= ch && ch <= '9';
+int charToDigit(char ch) {
+	if (ch >= '0' && ch <= '9')
+		return ch - '0';
+
+	return -1;
 }
 
-unsigned stringToUnsignedInteger(const char* numberString) {
-	if (!numberString) {
-		return 0; // error value
+bool containsOnlyNumericalChars(const char* str) {
+	if (!str)
+		return false;
+
+	while (*str) {
+		if (*str > '9' || *str < '0')
+			return false;
+
+		str++;
 	}
 
-	unsigned result = 0;
-	while (*numberString) {
-		char ch = *numberString;
-		if (!isDigit(ch)) {
-			return 0; // error value
-		}
-		result *= 10;
-		result += (ch - '0');
-		numberString++;
-	}
+	return true;
 
-	return result;
 }
 
+unsigned myAtoi(const char* str) {
+	if (!str)
+		return 0;
+
+	unsigned int res = 0;
+
+	if (!containsOnlyNumericalChars(str))
+		return 0;
+
+	while (*str)
+	{
+		res += charToDigit(*str);
+		res *= 10;
+		str++;
+	}
+	res /= 10;
+
+	return res;
+}

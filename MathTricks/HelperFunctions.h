@@ -19,7 +19,7 @@
 #include <iomanip>#pragma once
 #include "Constants.h";
 
-void printCentered(const char* text);
 unsigned getLength(const char* text);
-bool isDigit(char ch);
-unsigned stringToUnsignedInteger(const char* numberString);
+int charToDigit(char ch);
+bool containsOnlyNumericalChars(const char* str);
+unsigned myAtoi(const char* str);

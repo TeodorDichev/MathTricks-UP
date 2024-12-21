@@ -17,9 +17,10 @@
 
 #include <iostream>
 #include <iomanip>
-#include "Constants.h";
-#include "HelperFunctions.h";
+#include "Constants.h"
+#include "HelperFunctions.h"
+#include "Board.h"
 
-void MathTricks();
+void mathTricks();
 void mainMenu();
 void newGameMenu();
