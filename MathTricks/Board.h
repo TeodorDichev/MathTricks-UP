@@ -25,3 +25,5 @@
 void printBoard(unsigned width, unsigned height);
 void fillBoard(unsigned width, unsigned height);
 void deleteBoardMemory(unsigned height);
+bool isValidMove(char * input);
+void playTurn(char * input);

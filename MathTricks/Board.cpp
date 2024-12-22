@@ -15,14 +15,21 @@
 
 #include "Board.h";
 
-bool** visited;
-char** operations;
-unsigned** values;
+char ** operations;
+unsigned ** visited;
+unsigned ** values;
+
+unsigned boardWidth;
+unsigned boardHeight;
 
 unsigned p1CurrCellX;
 unsigned p1CurrCellY;
 unsigned p2CurrCellX;
 unsigned p2CurrCellY;
+
+int p1CurrScore;
+int p2CurrScore;
+bool isFirstPlayer;
 
 void fillBoard(unsigned width, unsigned height) {
     bool addition = false , subtraction = false, multByZero = false, multByTwo = false, divByTwo = false;
@@ -30,26 +37,42 @@ void fillBoard(unsigned width, unsigned height) {
     p1CurrCellY = 0;
     p2CurrCellX = width - 1;
     p2CurrCellY = height - 1;
+    p1CurrScore = 0;
+    p2CurrScore = 0;
+    isFirstPlayer = true;
+    boardWidth = width;
+    boardHeight = height;
 
     std::srand(std::time(0));
 
-    visited = new bool * [height];
+    visited = new unsigned* [height];
+    values = new unsigned* [height];
     operations = new char * [height];
-    values = new unsigned * [height];
 
     for (unsigned i = 0; i < height; ++i) {
-        visited[i] = new bool[width]; // Allocate each row
+        visited[i] = new unsigned[width]; // Allocate each row
         operations[i] = new char[width]; // Allocate each row
         values[i] = new unsigned[width]; // Allocate each row
     }
 
+    for (unsigned i = 0; i < width; i++)
+        for (unsigned j = 0; j < height; j++)
+            visited[i][j] = 0;
+
     for (unsigned i = 0; i < height; ++i) {
         for (unsigned j = 0; j < width; ++j) {
-            if ((i == 0 && j == 0) || (i == height - 1 && j == width - 1)) {
-                visited[i][j] = true;
+            if (i == 0 && j == 0) {
+                visited[i][j] = FIRST_PLAYER_COLOR;
                 operations[i][j] = ' ';
                 values[i][j] = 0;
                 continue;
+            }
+            else if (i == height - 1 && j == width - 1) {
+                visited[i][j] = SECOND_PLAYER_COLOR;
+                operations[i][j] = ' ';
+                values[i][j] = 0;
+                continue;
+
             }
 
             char op = possibleOperations[std::rand() % possibleOperationsSize];
@@ -97,32 +120,31 @@ void fillBoard(unsigned width, unsigned height) {
 void printBoard(unsigned width, unsigned height) {
 
     for (unsigned i = 0; i < height; ++i) {
-        // Top border
+
         for (unsigned j = 0; j < width; ++j)
             std::cout << "+--+ ";
 
         std::cout << "\n";
 
-        // Content
         for (unsigned j = 0; j < width; ++j) {
             std::cout << "|";
 
-            HANDLE  hConsole;
-            hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+            HANDLE  hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+            if (visited[i][j])
+                SetConsoleTextAttribute(hConsole, DEFAULT_COLOR + visited[i][j] * 16);
 
             if (i == p1CurrCellX && j == p1CurrCellY)
             {
-                SetConsoleTextAttribute(hConsole, 1);
+                SetConsoleTextAttribute(hConsole, 6 + FIRST_PLAYER_COLOR * 16);
                 std::cout << operations[i][j];
                 std::cout << values[i][j];
-                SetConsoleTextAttribute(hConsole, 15);
             }
             else if (i == p2CurrCellX && j == p2CurrCellY)
             {
-                SetConsoleTextAttribute(hConsole, 2);
+                SetConsoleTextAttribute(hConsole, 6 + SECOND_PLAYER_COLOR * 16);
                 std::cout << operations[i][j];
                 std::cout << values[i][j];
-                SetConsoleTextAttribute(hConsole, 15);
             }
             else 
             {
@@ -130,16 +152,18 @@ void printBoard(unsigned width, unsigned height) {
                 std::cout << values[i][j];
             }
 
+            SetConsoleTextAttribute(hConsole, DEFAULT_COLOR);
             std::cout << "| ";
         }
 
         std::cout << "\n";
     }
 
-    // Bottom border
     for (unsigned j = 0; j < width; ++j)
         std::cout << "+--+ ";
     std::cout << "\n";
+
+    printNextTurn(p1CurrCellX, p1CurrCellY, p1CurrScore, p2CurrCellX, p2CurrCellY, p2CurrScore, isFirstPlayer);
 }
 
 void deleteBoardMemory(unsigned height) {
@@ -166,4 +190,12 @@ void deleteBoardMemory(unsigned height) {
         delete[] values;
         values = nullptr;
     }
+}
+
+bool isValidMove(char * input) {
+    return false;
+}
+
+void playTurn(char* input) {
+    return;
 }

@@ -73,7 +73,10 @@ void mainMenu() {
             return;
         }
         else if (*input == CONTINUE_GAME_SYMBOL)
+        {
+            newGameMenu(); // TO DO
             return;
+        }
         else
             std::cout << "Invalid input, please try again\n";
 
@@ -112,4 +115,50 @@ void newGameMenu() {
 
     } while (true);
 
+}
+
+void printNextTurn(unsigned p1CurrCellX, unsigned p1CurrCellY, int p1CurrScore,
+    unsigned p2CurrCellX, unsigned p2CurrCellY, int p2CurrScore, bool isFirstPlayer) {
+    HANDLE  hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    SetConsoleTextAttribute(hConsole, FIRST_PLAYER_COLOR);
+    std::cout << "Player 1 is currently on [" << p1CurrCellX << ", " << p1CurrCellY 
+        << "], and has " << p1CurrScore << " points\n";
+
+    SetConsoleTextAttribute(hConsole, SECOND_PLAYER_COLOR);
+    std::cout << "Player 2 is currently on [" << p2CurrCellX << ", " << p2CurrCellY 
+        << "], and has " << p2CurrScore << " points\n";
+
+    char input[MAX_SIZE];
+    if (isFirstPlayer) {
+        SetConsoleTextAttribute(hConsole, FIRST_PLAYER_COLOR);
+        std::cout << "Waiting for player 1... ";
+        std::cin.getline(input, MAX_SIZE);
+        std::cin.clear();
+
+        // Repeat until valid move
+        while (!isValidMove(input))
+        {
+            std::cout << "Invalid input, please try again\n";
+            std::cin.getline(input, MAX_SIZE);
+            std::cin.clear();
+        }
+    }
+    else {
+        SetConsoleTextAttribute(hConsole, SECOND_PLAYER_COLOR);
+        std::cout << "Waiting for player 2... ";
+        std::cin.getline(input, MAX_SIZE);
+        std::cin.clear();
+
+        // Repeat until valid move
+        while (!isValidMove(input))
+        {
+            std::cout << "Invalid input, please try again\n";
+            std::cin.getline(input, MAX_SIZE);
+            std::cin.clear();
+        }
+    }
+    
+    SetConsoleTextAttribute(hConsole, DEFAULT_COLOR);
+    playTurn(input);
 }

@@ -20,6 +20,10 @@ constexpr unsigned MAX_BOARD_SIZE = 12;
 constexpr unsigned MIN_BOARD_SIZE = 4;
 constexpr unsigned VALUE_DIVISOR = 3;
 
+constexpr unsigned FIRST_PLAYER_COLOR = 4;
+constexpr unsigned SECOND_PLAYER_COLOR = 1;
+constexpr unsigned DEFAULT_COLOR = 15;
+
 constexpr char QUIT_SYMBOL = 'q';
 constexpr char NEW_GAME_SYMBOL = 'n';
 constexpr char CONTINUE_GAME_SYMBOL = 'c';
