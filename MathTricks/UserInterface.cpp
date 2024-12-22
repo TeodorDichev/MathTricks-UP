@@ -83,7 +83,7 @@ void mainMenu() {
 void newGameMenu() {
     std::cout << std::endl;
     system(CLEAR_CONSOLE_CMD);
-    std::cout << "Enter grid dimensions [4 - 16]\n";
+    std::cout << "Enter grid dimensions [" << MIN_BOARD_SIZE << " - " << MAX_BOARD_SIZE << "] \n";
 
     char input[MAX_SIZE]; // using static memory -> auto clear after method
 
@@ -98,12 +98,15 @@ void newGameMenu() {
         std::cin.clear();
         unsigned height = myAtoi(input);
 
-        if (width < 4 || width > 16 || height < 4 || height > 16)
+        if (width < MIN_BOARD_SIZE || width > MAX_BOARD_SIZE 
+            || height < MIN_BOARD_SIZE || height > MAX_BOARD_SIZE)
             std::cout << "Invalid input, please try again\n";
         else
         {
+            system(CLEAR_CONSOLE_CMD);
             fillBoard(width, height);
             printBoard(width, height);
+            deleteBoardMemory(height);
             return;
         }
 

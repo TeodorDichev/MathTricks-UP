@@ -16,6 +16,9 @@
 #pragma once
 
 constexpr unsigned MAX_SIZE = 1024;
+constexpr unsigned MAX_BOARD_SIZE = 12;
+constexpr unsigned MIN_BOARD_SIZE = 4;
+constexpr unsigned VALUE_DIVISOR = 3;
 
 constexpr char QUIT_SYMBOL = 'q';
 constexpr char NEW_GAME_SYMBOL = 'n';
@@ -26,5 +29,5 @@ constexpr char TERMINATE_SYMBOL = '\0';
 constexpr char CLEAR_CONSOLE_CMD[] = "cls";
 
 // Adjust as needed to change operation appearance in board
-constexpr char possibleOperations[] = { '+', '+', '+', '-', '*', '/' };
-constexpr unsigned possibleOperationsSize = 6;
+constexpr char possibleOperations[] = { '+', '+', '+', '+', '-', '-', '*', '/' };
+constexpr unsigned possibleOperationsSize = 8;

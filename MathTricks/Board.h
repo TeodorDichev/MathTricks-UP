@@ -17,9 +17,11 @@
 
 #include <iostream>
 #include <iomanip>
+#include <windows.h>
 #include "Constants.h";
 #include "HelperFunctions.h";
 #include "UserInterface.h";
 
 void printBoard(unsigned width, unsigned height);
 void fillBoard(unsigned width, unsigned height);
+void deleteBoardMemory(unsigned height);

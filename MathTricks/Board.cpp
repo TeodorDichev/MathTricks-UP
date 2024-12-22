@@ -14,13 +14,22 @@
 */
 
 #include "Board.h";
-bool ** visited;
-char ** operations;
-unsigned ** values;
+
+bool** visited;
+char** operations;
+unsigned** values;
+
+unsigned p1CurrCellX;
+unsigned p1CurrCellY;
+unsigned p2CurrCellX;
+unsigned p2CurrCellY;
 
 void fillBoard(unsigned width, unsigned height) {
-
-    unsigned opCounts[4] = { 0, 0, 0, 0 }; // Track counts of each operation
+    bool addition = false , subtraction = false, multByZero = false, multByTwo = false, divByTwo = false;
+    p1CurrCellX = 0;
+    p1CurrCellY = 0;
+    p2CurrCellX = width - 1;
+    p2CurrCellY = height - 1;
 
     std::srand(std::time(0));
 
@@ -46,33 +55,43 @@ void fillBoard(unsigned width, unsigned height) {
             char op = possibleOperations[std::rand() % possibleOperationsSize];
             operations[i][j] = op;
 
-            if (op == '/')
-                values[i][j] = std::rand() % ((width + height) / 4) + 1;
-            else if (op == '*')
-                values[i][j] = std::rand() % ((width + height) / 4 + 1);
-            else
-                values[i][j] = std::rand() % 10;
-
-            // Count operations
-            for (int k = 0; k < 4; ++k) {
-                if (op == possibleOperations[k]) {
-                    opCounts[k]++;
-                    break;
+            if (op == '/') 
+            {
+                if (!divByTwo) // Still random as div. cell is chosen randomly
+                { 
+                    values[i][j] = 2;
+                    divByTwo = true;
                 }
+                else
+                    values[i][j] = std::rand() % ((width + height) / VALUE_DIVISOR) + 1; // So as to not have /0
+            }
+            else if (op == '-')
+            {
+                values[i][j] = std::rand() % ((width + height) / VALUE_DIVISOR) + 1; // So as to not have -0
+                subtraction = true;
+            }
+            else if (op == '*') // Still random as mult. cell is chosen randomly
+            {
+                if (!multByZero) 
+                { 
+                    values[i][j] = 0; 
+                    multByZero = true; 
+                }
+                else if (!multByTwo) 
+                { 
+                    values[i][j] = 2; 
+                    multByTwo = true;
+                }
+                else 
+                    values[i][j] = std::rand() % ((width + height) / VALUE_DIVISOR + 1);
+            }
+            else
+            {
+                values[i][j] = std::rand() % 10;
+                addition = true;
             }
         }
     }
-
-    // Check if there is a missing operation
-    // It will not change anything on the player starting cell because there is no sign
-    for (int k = 0; k < 4; ++k) {
-        if (opCounts[k] == 0) {
-            unsigned i = std::rand() % height;
-            unsigned j = std::rand() % width;
-            operations[i][j] = possibleOperations[k];
-        }
-    }
-
 }
 
 void printBoard(unsigned width, unsigned height) {
@@ -87,8 +106,30 @@ void printBoard(unsigned width, unsigned height) {
         // Content
         for (unsigned j = 0; j < width; ++j) {
             std::cout << "|";
-            std::cout << operations[i][j];     // Operation
-            std::cout << values[i][j]; // Number
+
+            HANDLE  hConsole;
+            hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+            if (i == p1CurrCellX && j == p1CurrCellY)
+            {
+                SetConsoleTextAttribute(hConsole, 1);
+                std::cout << operations[i][j];
+                std::cout << values[i][j];
+                SetConsoleTextAttribute(hConsole, 15);
+            }
+            else if (i == p2CurrCellX && j == p2CurrCellY)
+            {
+                SetConsoleTextAttribute(hConsole, 2);
+                std::cout << operations[i][j];
+                std::cout << values[i][j];
+                SetConsoleTextAttribute(hConsole, 15);
+            }
+            else 
+            {
+                std::cout << operations[i][j];
+                std::cout << values[i][j];
+            }
+
             std::cout << "| ";
         }
 
