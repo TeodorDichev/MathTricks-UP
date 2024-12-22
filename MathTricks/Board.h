@@ -21,4 +21,5 @@
 #include "HelperFunctions.h";
 #include "UserInterface.h";
 
-void drawBoard(unsigned width, unsigned height);
+void printBoard(unsigned width, unsigned height);
+void fillBoard(unsigned width, unsigned height);

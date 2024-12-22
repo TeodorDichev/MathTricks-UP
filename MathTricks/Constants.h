@@ -25,4 +25,6 @@ constexpr char TERMINATE_SYMBOL = '\0';
 
 constexpr char CLEAR_CONSOLE_CMD[] = "cls";
 
-constexpr char operations[] = { '+', '-', '*', '/' };
+// Adjust as needed to change operation appearance in board
+constexpr char possibleOperations[] = { '+', '+', '+', '-', '*', '/' };
+constexpr unsigned possibleOperationsSize = 6;

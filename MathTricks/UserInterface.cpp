@@ -102,7 +102,8 @@ void newGameMenu() {
             std::cout << "Invalid input, please try again\n";
         else
         {
-            drawBoard(width, height);
+            fillBoard(width, height);
+            printBoard(width, height);
             return;
         }
 

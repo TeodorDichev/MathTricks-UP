@@ -14,43 +14,48 @@
 */
 
 #include "Board.h";
-char ** board;
+bool ** visited;
+char ** operations;
+unsigned ** values;
 
-void drawBoard(unsigned width, unsigned height){
+void fillBoard(unsigned width, unsigned height) {
+
     unsigned opCounts[4] = { 0, 0, 0, 0 }; // Track counts of each operation
 
-    // Seed random generator
     std::srand(std::time(0));
 
-    // Allocate the grid
-    board = new char* [height];
-    for (unsigned i = 0; i < height; ++i)
-        board[i] = new char[width * 2]; // 2 characters per cell (operation and number) ADJUST IF NEEDED
+    visited = new bool * [height];
+    operations = new char * [height];
+    values = new unsigned * [height];
 
-    // Fill the grid
+    for (unsigned i = 0; i < height; ++i) {
+        visited[i] = new bool[width]; // Allocate each row
+        operations[i] = new char[width]; // Allocate each row
+        values[i] = new unsigned[width]; // Allocate each row
+    }
+
     for (unsigned i = 0; i < height; ++i) {
         for (unsigned j = 0; j < width; ++j) {
             if ((i == 0 && j == 0) || (i == height - 1 && j == width - 1)) {
-                board[i][j * 2] = ' ';
-                board[i][j * 2 + 1] = ' ';
+                visited[i][j] = true;
+                operations[i][j] = ' ';
+                values[i][j] = 0;
                 continue;
             }
 
-            // Randomly select an operation
-            char op = operations[std::rand() % 4];
+            char op = possibleOperations[std::rand() % possibleOperationsSize];
+            operations[i][j] = op;
 
-            // Prioritize smaller numbers for * and /
-            unsigned num = (op == '*' || op == '/') ? 
-                (std::rand() % ((width + height) / 4)) : // is * or /
-                (std::rand() % 10); // is + or -
-
-            // Store operation and number in the grid
-            board[i][j * 2] = op;             // Operation
-            board[i][j * 2 + 1] = num + '0';  // Number as a character
+            if (op == '/')
+                values[i][j] = std::rand() % ((width + height) / 4) + 1;
+            else if (op == '*')
+                values[i][j] = std::rand() % ((width + height) / 4 + 1);
+            else
+                values[i][j] = std::rand() % 10;
 
             // Count operations
             for (int k = 0; k < 4; ++k) {
-                if (op == operations[k]) {
+                if (op == possibleOperations[k]) {
                     opCounts[k]++;
                     break;
                 }
@@ -58,17 +63,20 @@ void drawBoard(unsigned width, unsigned height){
         }
     }
 
-    // Ensure at least one of each operation is present
+    // Check if there is a missing operation
+    // It will not change anything on the player starting cell because there is no sign
     for (int k = 0; k < 4; ++k) {
         if (opCounts[k] == 0) {
-            // Randomly place the missing operation in the grid
             unsigned i = std::rand() % height;
             unsigned j = std::rand() % width;
-            board[i][j * 2] = operations[k];
+            operations[i][j] = possibleOperations[k];
         }
     }
 
-    // Draw the grid
+}
+
+void printBoard(unsigned width, unsigned height) {
+
     for (unsigned i = 0; i < height; ++i) {
         // Top border
         for (unsigned j = 0; j < width; ++j)
@@ -79,8 +87,8 @@ void drawBoard(unsigned width, unsigned height){
         // Content
         for (unsigned j = 0; j < width; ++j) {
             std::cout << "|";
-            std::cout << board[i][j * 2];     // Operation
-            std::cout << board[i][j * 2 + 1]; // Number
+            std::cout << operations[i][j];     // Operation
+            std::cout << values[i][j]; // Number
             std::cout << "| ";
         }
 
@@ -91,9 +99,30 @@ void drawBoard(unsigned width, unsigned height){
     for (unsigned j = 0; j < width; ++j)
         std::cout << "+--+ ";
     std::cout << "\n";
+}
 
-    // Deallocate the grid
-    for (unsigned i = 0; i < height; ++i)
-        delete[] board[i];
-    delete[] board;
+void deleteBoardMemory(unsigned height) {
+    if (visited) {
+        for (unsigned i = 0; i < height; ++i)
+            delete[] visited[i];
+
+        delete[] visited;
+        visited = nullptr;
+    }
+
+    if (operations) {
+        for (unsigned i = 0; i < height; ++i)
+            delete[] operations[i];
+
+        delete[] operations;
+        operations = nullptr;
+    }
+
+    if (values) {
+        for (unsigned i = 0; i < height; ++i)
+            delete[] values[i];
+
+        delete[] values;
+        values = nullptr;
+    }
 }
