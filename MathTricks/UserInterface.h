@@ -26,3 +26,4 @@ void mainMenu();
 void newGameMenu();
 void printNextTurn(unsigned p1CurrCellX, unsigned p1CurrCellY, int p1CurrScore,
     unsigned p2CurrCellX, unsigned p2CurrCellY, int p2CurrScore, bool isFirstPlayer);
+void printWinScreen(bool isFirstPlayer);

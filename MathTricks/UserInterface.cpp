@@ -137,7 +137,7 @@ void printNextTurn(unsigned p1CurrCellX, unsigned p1CurrCellY, int p1CurrScore,
         std::cin.clear();
 
         // Repeat until valid move
-        while (!isValidMove(input))
+        while (!isValidMove(input, p1CurrCellX, p1CurrCellY))
         {
             std::cout << "Invalid input, please try again\n";
             std::cin.getline(input, MAX_SIZE);
@@ -151,7 +151,7 @@ void printNextTurn(unsigned p1CurrCellX, unsigned p1CurrCellY, int p1CurrScore,
         std::cin.clear();
 
         // Repeat until valid move
-        while (!isValidMove(input))
+        while (!isValidMove(input, p2CurrCellX, p2CurrCellY))
         {
             std::cout << "Invalid input, please try again\n";
             std::cin.getline(input, MAX_SIZE);
@@ -161,4 +161,8 @@ void printNextTurn(unsigned p1CurrCellX, unsigned p1CurrCellY, int p1CurrScore,
     
     SetConsoleTextAttribute(hConsole, DEFAULT_COLOR);
     playTurn(input);
+}
+
+void printWinScreen(bool isFirstPlayer) {
+
 }
