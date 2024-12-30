@@ -192,55 +192,61 @@ void deleteBoardMemory(unsigned height) {
 	}
 }
 
-bool isValidMove(char* input, unsigned currCellX, unsigned currCellY) {
+bool isValidMove(unsigned x, unsigned y) {
+	if (isFirstPlayer)
+		return !(x > boardWidth || y > boardHeight || visited[x][y] || (x == p1CurrCellX && y == p1CurrCellY));
+	else
+		return !(x > boardWidth || y > boardHeight || visited[x][y] || (x == p2CurrCellX && y == p2CurrCellY));
+}
 
-	if (getLength(input) != 1 || !containsOnlyNumericalChars(input)) return false;
-	int number = charToDigit(*input);
-	if (number < 1 || number > 9) return false;
+// TO DO
+bool noValidMoves() {
+	return false;
+}
 
-	switch (number)
-	{
-	case 1:
-		if (currCellX + 1 < boardHeight && currCellY - 1 > 0 && !visited[currCellX + 1][currCellY - 1]) return true;
-		return false;
-	case 2:
-		if (currCellX + 1 > 0 && !visited[currCellX + 1][currCellY]) return true;
-		return false;
-	case 3:
-		if (currCellX + 1 < boardHeight && currCellY + 1 < boardWidth && !visited[currCellX + 1][currCellY + 1]) return true;
-		return false;
-	case 4:
-		if (currCellX - 1 > 0 && !visited[currCellX - 1][currCellY]) return true;
-		return false;
-	case 6:
-		if (currCellY + 1 < boardHeight && !visited[currCellX][currCellY + 1]) return true;
-		return false;
-	case 7:
-		if (currCellX - 1 > 0 && currCellY - 1 > 0 && !visited[currCellX - 1][currCellY - 1]) return true;
-		return false;
-	case 8:
-		if (currCellX - 1 > 0 && !visited[currCellX - 1][currCellY]) return true;
-		return false;
-	case 9:
-		if (currCellX - 1 < 0 && currCellY + 1 < boardHeight && !visited[currCellX - 1][currCellY + 1]) return true;
-		return false;
-	default:
-		return false;
+void playTurn(unsigned x, unsigned y) {
+
+	if (isFirstPlayer) {
+		p1CurrCellX = x;
+		p1CurrCellY = y;
+		visited[x][y] = FIRST_PLAYER_COLOR;
+		calculateScore(x, y, p1CurrScore);
 	}
-}
+	else {
+		p2CurrCellX = x;
+		p2CurrCellY = y;
+		visited[x][y] = SECOND_PLAYER_COLOR;
+		calculateScore(x, y, p2CurrScore);
 
-bool hasNoValidMoves(unsigned currCellX, unsigned currCellY) {
-	if (currCellX + 1 < boardHeight && currCellY - 1 > 0 && !visited[currCellX + 1][currCellY - 1]) return true;
-	else if (currCellX + 1 > 0 && !visited[currCellX + 1][currCellY]) return true;
-	else if (currCellX + 1 < boardHeight && currCellY + 1 < boardWidth && !visited[currCellX + 1][currCellY + 1]) return true;
-	else if (currCellX - 1 > 0 && !visited[currCellX - 1][currCellY]) return true;
-	else if (currCellY + 1 < boardHeight && !visited[currCellX][currCellY + 1]) return true;
-	else if (currCellX - 1 > 0 && currCellY - 1 > 0 && !visited[currCellX - 1][currCellY - 1]) return true;
-	else if (currCellX - 1 > 0 && !visited[currCellX - 1][currCellY]) return true;
-	else if (currCellX - 1 < 0 && currCellY + 1 < boardHeight && !visited[currCellX - 1][currCellY + 1]) return true;
-	else return false;
-}
+		// In order for the game to be fair we wait for the second player to complete their turn
+		if (noValidMoves())
+		{
+			printWinScreen(p1CurrScore, p2CurrScore);
+			return;
+		}
+	}
 
-void playTurn(char* input) {
+	isFirstPlayer = !isFirstPlayer;
 	return;
+}
+
+void calculateScore(unsigned x, unsigned y, int& score) {
+	switch (operations[x][y])
+	{
+	case '+':
+		score += values[x][y];
+		return;
+	case '-':
+		score -= values[x][y];
+		return;
+	case '*':
+		score *= values[x][y];
+		return;
+	case '/':
+		score /= values[x][y];
+		return;
+	default:
+		return;
+	}
+
 }
