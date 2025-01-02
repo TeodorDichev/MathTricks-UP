@@ -15,8 +15,6 @@
 
 #pragma once
 
-#include <iostream>#pragma once
-#include <iomanip>#pragma once
 #include "Constants.h";
 
 unsigned getLength(const char* text);

@@ -15,7 +15,7 @@
 
 #pragma once
 
-constexpr unsigned MAX_SIZE = 1024;
+constexpr unsigned MAX_SIZE_INPUT = 1024;
 constexpr unsigned MAX_BOARD_SIZE = 12;
 constexpr unsigned MIN_BOARD_SIZE = 4;
 constexpr unsigned VALUE_DIVISOR = 3;
@@ -29,7 +29,7 @@ constexpr char NEW_GAME_SYMBOL = 'n';
 constexpr char CONTINUE_GAME_SYMBOL = 'c';
 constexpr char MAIN_MENU_SYMBOL = 'm';
 constexpr char TERMINATE_SYMBOL = '\0';
-
+constexpr char ERROR_MESSAGE[] = "Invalid input! Please try again\n";
 constexpr char CLEAR_CONSOLE_CMD[] = "cls";
 
 // Adjust as needed to change operation appearance in board

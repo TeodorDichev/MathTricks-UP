@@ -22,9 +22,9 @@
 #include "HelperFunctions.h";
 #include "UserInterface.h";
 
-void printBoard(unsigned width, unsigned height);
-void fillBoard(unsigned width, unsigned height);
-void deleteBoardMemory(unsigned height);
+void printBoard(unsigned cols, unsigned rows);
+void fillBoard(unsigned cols, unsigned rows);
+void deleteBoardMemory(unsigned rows);
 bool isMoveValid(unsigned x, unsigned y);
 bool hasValidMoveForPlayer(unsigned x, unsigned y);
 void playTurn(unsigned x, unsigned y);

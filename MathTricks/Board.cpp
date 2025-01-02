@@ -19,8 +19,8 @@ char** operations;
 unsigned** visited;
 int** values;
 
-unsigned boardWidth;
-unsigned boardHeight;
+unsigned boardCols;
+unsigned boardRows;
 
 unsigned p1CurrCellX;
 unsigned p1CurrCellY;
@@ -31,44 +31,44 @@ int p1CurrScore;
 int p2CurrScore;
 bool isFirstPlayer;
 
-void fillBoard(unsigned width, unsigned height) {
+void fillBoard(unsigned cols, unsigned rows) {
 	bool addition = false, subtraction = false, multByZero = false, multByTwo = false, divByTwo = false;
 	p1CurrCellX = 0;
 	p1CurrCellY = 0;
-	p2CurrCellX = width - 1;
-	p2CurrCellY = height - 1;
+	p2CurrCellX = cols - 1;
+	p2CurrCellY = rows - 1;
 	p1CurrScore = 0;
 	p2CurrScore = 0;
 	isFirstPlayer = true;
-	boardWidth = width;
-	boardHeight = height;
+	boardCols = cols;
+	boardRows = rows;
 
 	std::srand(std::time(0));
 
-	//Allocate arrays with the correct dimensions (height x width)
-	visited = new unsigned* [height];
-	values = new int* [height];
-	operations = new char* [height];
+	//Allocate arrays with the correct dimensions (cols x rows)
+	visited = new unsigned* [rows];
+	values = new int* [rows];
+	operations = new char* [rows];
 
-	for (unsigned i = 0; i < height; ++i) {
-		visited[i] = new unsigned[width]; // Allocate each row
-		operations[i] = new char[width]; // Allocate each row
-		values[i] = new int[width]; // Allocate each row
+	for (unsigned i = 0; i < rows; ++i) {
+		visited[i] = new unsigned[cols]; // Allocate each row
+		operations[i] = new char[cols]; // Allocate each row
+		values[i] = new int[cols]; // Allocate each row
 	}
 
-	for (unsigned i = 0; i < height; ++i)
-		for (unsigned j = 0; j < width; ++j)
+	for (unsigned i = 0; i < rows; ++i)
+		for (unsigned j = 0; j < cols; ++j)
 			visited[i][j] = 0;
 
-	for (unsigned y = 0; y < height; ++y) {
-		for (unsigned x = 0; x < width; ++x) {
+	for (unsigned y = 0; y < rows; ++y) {
+		for (unsigned x = 0; x < cols; ++x) {
 			if (y == 0 && x == 0) {
 				visited[y][x] = FIRST_PLAYER_COLOR;
 				operations[y][x] = ' ';
 				values[y][x] = 0;
 				continue;
 			}
-			else if (y == height - 1 && x == width - 1) {
+			else if (y == rows - 1 && x == cols - 1) {
 				visited[y][x] = SECOND_PLAYER_COLOR;
 				operations[y][x] = ' ';
 				values[y][x] = 0;
@@ -85,11 +85,11 @@ void fillBoard(unsigned width, unsigned height) {
 					divByTwo = true;
 				}
 				else
-					values[y][x] = std::rand() % ((width + height) / VALUE_DIVISOR) + 1; // So as to not have /0
+					values[y][x] = std::rand() % ((cols + rows) / VALUE_DIVISOR) + 1; // So as to not have /0
 			}
 			else if (op == '-')
 			{
-				values[y][x] = std::rand() % ((width + height) / VALUE_DIVISOR) + 1; // So as to not have -0
+				values[y][x] = std::rand() % ((cols + rows) / VALUE_DIVISOR) + 1; // So as to not have -0
 				subtraction = true;
 			}
 			else if (op == '*') {
@@ -104,7 +104,7 @@ void fillBoard(unsigned width, unsigned height) {
 					multByTwo = true;
 				}
 				else
-					values[y][x] = std::rand() % ((width + height) / VALUE_DIVISOR + 1);
+					values[y][x] = std::rand() % ((cols + rows) / VALUE_DIVISOR + 1);
 			}
 			else
 			{
@@ -115,16 +115,16 @@ void fillBoard(unsigned width, unsigned height) {
 	}
 }
 
-void printBoard(unsigned width, unsigned height) {
+void printBoard(unsigned cols, unsigned rows) {
 	system(CLEAR_CONSOLE_CMD);
 
-	for (unsigned i = 0; i < height; ++i) {
-		for (unsigned j = 0; j < width; ++j)
+	for (unsigned i = 0; i < rows; ++i) {
+		for (unsigned j = 0; j < cols; ++j)
 			std::cout << "+--+ ";
 
 		std::cout << "\n";
 
-		for (unsigned j = 0; j < width; ++j) {
+		for (unsigned j = 0; j < cols; ++j) {
 			std::cout << "|";
 
 			HANDLE  hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -156,14 +156,14 @@ void printBoard(unsigned width, unsigned height) {
 		std::cout << "\n";
 	}
 
-	for (unsigned j = 0; j < width; ++j)
+	for (unsigned j = 0; j < cols; ++j)
 		std::cout << "+--+ ";
 	std::cout << "\n";
 }
 
-void deleteBoardMemory(unsigned height) {
+void deleteBoardMemory(unsigned rows) {
 	if (visited) {
-		for (unsigned i = 0; i < height; ++i)
+		for (unsigned i = 0; i < rows; ++i)
 			delete[] visited[i];
 
 		delete[] visited;
@@ -171,7 +171,7 @@ void deleteBoardMemory(unsigned height) {
 	}
 
 	if (operations) {
-		for (unsigned i = 0; i < height; ++i)
+		for (unsigned i = 0; i < rows; ++i)
 			delete[] operations[i];
 
 		delete[] operations;
@@ -179,7 +179,7 @@ void deleteBoardMemory(unsigned height) {
 	}
 
 	if (values) {
-		for (unsigned i = 0; i < height; ++i)
+		for (unsigned i = 0; i < rows; ++i)
 			delete[] values[i];
 
 		delete[] values;
@@ -195,7 +195,7 @@ bool isMoveValid(unsigned x, unsigned y) {
 	unsigned currX = isFirstPlayer ? p1CurrCellX : p2CurrCellX;
 	unsigned currY = isFirstPlayer ? p1CurrCellY : p2CurrCellY;
 
-	if (x >= boardWidth || y >= boardHeight)
+	if (x >= boardCols || y >= boardRows)
 		return false;
 
 	if (visited[y][x] != 0)
@@ -219,7 +219,7 @@ bool hasValidMoveForPlayer(unsigned x, unsigned y) {
 		int ny = y + dy[i];
 
 		// Check if the neighboring cell is within bounds and not visited
-		if (nx >= 0 && nx < boardWidth && ny >= 0 && ny < boardHeight && visited[ny][nx] == 0)
+		if (nx >= 0 && nx < boardCols && ny >= 0 && ny < boardRows && visited[ny][nx] == 0)
 			return true;
 	}
 	return false;
@@ -241,7 +241,7 @@ void playTurn(unsigned x, unsigned y) {
 
 	isFirstPlayer = !isFirstPlayer;
 	serializeLastTurn();
-	printBoard(boardWidth, boardHeight);
+	printBoard(boardCols, boardRows);
 	printNextTurn(p1CurrCellX, p1CurrCellY, p1CurrScore, p2CurrCellX, p2CurrCellY, p2CurrScore, isFirstPlayer);
 }
 
@@ -268,8 +268,8 @@ int serializeLastTurn() {
 	std::ofstream outputFile("lastGame.txt");
 	if (outputFile.is_open()) {
 		outputFile << "board\n";
-		outputFile << boardWidth << '\n';
-		outputFile << boardHeight << '\n';
+		outputFile << boardCols << '\n';
+		outputFile << boardRows << '\n';
 
 		outputFile << "\nplayer1\n";
 		outputFile << p1CurrCellX << '\n';
@@ -285,22 +285,22 @@ int serializeLastTurn() {
 		outputFile << isFirstPlayer << '\n';
 
 		outputFile << "\noperations\n";
-		for (unsigned i = 0; i < boardHeight; ++i) {
-			for (unsigned j = 0; j < boardWidth; ++j)
+		for (unsigned i = 0; i < boardRows; ++i) {
+			for (unsigned j = 0; j < boardCols; ++j)
 				outputFile << operations[i][j];
 			outputFile << '\n';
 		}
 
 		outputFile << "\nvisited\n";
-		for (unsigned i = 0; i < boardHeight; ++i) {
-			for (unsigned j = 0; j < boardWidth; ++j)
+		for (unsigned i = 0; i < boardRows; ++i) {
+			for (unsigned j = 0; j < boardCols; ++j)
 				outputFile << visited[i][j];
 			outputFile << '\n';
 		}
 
 		outputFile << "\nvalues\n";
-		for (unsigned i = 0; i < boardHeight; ++i) {
-			for (unsigned j = 0; j < boardWidth; ++j)
+		for (unsigned i = 0; i < boardRows; ++i) {
+			for (unsigned j = 0; j < boardCols; ++j)
 				outputFile << values[i][j];
 			outputFile << '\n';
 		}
@@ -314,43 +314,43 @@ int serializeLastTurn() {
 
 int deserializeLastGame() {
 	std::ifstream inputFile("lastGame.txt");
-	char input[MAX_SIZE]; // using static memory -> auto clear after method
+	char input[MAX_SIZE_INPUT]; // using static memory -> auto clear after method
 
 	if (inputFile.is_open()) {
-		while (inputFile.getline(input, MAX_SIZE)) {
+		while (inputFile.getline(input, MAX_SIZE_INPUT)) {
 			if (!myStrCmp(input, "board")) {
-				inputFile.getline(input, MAX_SIZE);
-				boardWidth = atoi(input);
-				inputFile.getline(input, MAX_SIZE);
-				boardHeight = atoi(input);
+				inputFile.getline(input, MAX_SIZE_INPUT);
+				boardCols = atoi(input);
+				inputFile.getline(input, MAX_SIZE_INPUT);
+				boardRows = atoi(input);
 			}
 			if (!myStrCmp(input, "player1")) {
-				inputFile.getline(input, MAX_SIZE);
+				inputFile.getline(input, MAX_SIZE_INPUT);
 				p1CurrCellX = atoi(input);
-				inputFile.getline(input, MAX_SIZE);
+				inputFile.getline(input, MAX_SIZE_INPUT);
 				p1CurrCellY = atoi(input);
-				inputFile.getline(input, MAX_SIZE);
+				inputFile.getline(input, MAX_SIZE_INPUT);
 				p1CurrScore = atoi(input);
 			}
 			if (!myStrCmp(input, "player2")) {
-				inputFile.getline(input, MAX_SIZE);
+				inputFile.getline(input, MAX_SIZE_INPUT);
 				p2CurrCellX = atoi(input);
-				inputFile.getline(input, MAX_SIZE);
+				inputFile.getline(input, MAX_SIZE_INPUT);
 				p2CurrCellY = atoi(input);
-				inputFile.getline(input, MAX_SIZE);
+				inputFile.getline(input, MAX_SIZE_INPUT);
 				p2CurrScore = atoi(input);
 			}
 			if (!myStrCmp(input, "isFirstPlayer")) {
-				inputFile.getline(input, MAX_SIZE);
+				inputFile.getline(input, MAX_SIZE_INPUT);
 				isFirstPlayer = atoi(input);
 			}
 			if (!myStrCmp(input, "operations")) {
-				operations = new char* [boardHeight];
+				operations = new char* [boardRows];
 
-				for (unsigned i = 0; i < boardHeight; ++i) {
-					operations[i] = new char[boardWidth]; // Allocate each row
+				for (unsigned i = 0; i < boardRows; ++i) {
+					operations[i] = new char[boardCols]; // Allocate each row
 
-					for (unsigned j = 0; j < boardWidth; ++j) {
+					for (unsigned j = 0; j < boardCols; ++j) {
 						char c = inputFile.get();
 						while (c == '\n')
 							c = inputFile.get();
@@ -360,12 +360,12 @@ int deserializeLastGame() {
 				}
 			}
 			if (!myStrCmp(input, "visited")) {
-				visited = new unsigned* [boardHeight];
+				visited = new unsigned* [boardRows];
 
-				for (unsigned i = 0; i < boardHeight; ++i) {
-					visited[i] = new unsigned[boardWidth]; // Allocate each row
+				for (unsigned i = 0; i < boardRows; ++i) {
+					visited[i] = new unsigned[boardCols]; // Allocate each row
 
-					for (unsigned j = 0; j < boardWidth; ++j) {
+					for (unsigned j = 0; j < boardCols; ++j) {
 						char c = inputFile.get();
 						while (c == '\n')
 							c = inputFile.get();
@@ -378,12 +378,12 @@ int deserializeLastGame() {
 				}
 			}
 			if (!myStrCmp(input, "values")) {
-				values = new int* [boardHeight];
+				values = new int* [boardRows];
 
-				for (unsigned i = 0; i < boardHeight; ++i) {
-					values[i] = new int[boardWidth]; // Allocate each row
+				for (unsigned i = 0; i < boardRows; ++i) {
+					values[i] = new int[boardCols]; // Allocate each row
 
-					for (unsigned j = 0; j < boardWidth; ++j) {
+					for (unsigned j = 0; j < boardCols; ++j) {
 						char c = inputFile.get();
 						while (c == '\n')
 							c = inputFile.get();
@@ -393,7 +393,9 @@ int deserializeLastGame() {
 				}
 			}
 		}
-		printBoard(boardWidth, boardHeight);
+
+		inputFile.close();
+		printBoard(boardCols, boardRows);
 		printNextTurn(p1CurrCellX, p1CurrCellY, p1CurrScore, p2CurrCellX, p2CurrCellY, p2CurrScore, isFirstPlayer);
 		return 0;
 	}
