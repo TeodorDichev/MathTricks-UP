@@ -25,7 +25,7 @@
 void printBoard(unsigned width, unsigned height);
 void fillBoard(unsigned width, unsigned height);
 void deleteBoardMemory(unsigned height);
-bool isValidMove(unsigned x, unsigned y);
-bool noValidMoves();
+bool isMoveValid(unsigned x, unsigned y);
+bool hasValidMoveForPlayer(unsigned x, unsigned y);
 void playTurn(unsigned x, unsigned y);
 void calculateScore(unsigned x, unsigned y, int& score);
