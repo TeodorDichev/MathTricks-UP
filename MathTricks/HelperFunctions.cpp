@@ -68,3 +68,24 @@ unsigned myAtoi(const char* str) {
 
 	return res;
 }
+
+int myStrCmp(const char* str1, const char* str2) {
+	while (*str1 && *str2) {
+		if (*str1 == ' ' || *str1 == '\n') {
+			++str1;
+			continue;
+		}
+		if (*str2 == ' ' || *str2 == '\n') {
+			++str2;
+			continue;
+		}
+
+		if (*str1 != *str2)
+			return *str1 - *str2;
+
+		++str1;
+		++str2;
+	}
+
+	return *str1 - *str2;
+}

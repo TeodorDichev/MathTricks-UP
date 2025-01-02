@@ -23,3 +23,4 @@ unsigned getLength(const char* text);
 int charToDigit(char ch);
 bool containsOnlyNumericalChars(const char* str);
 unsigned myAtoi(const char* str);
+int myStrCmp(const char* first, const char* second);

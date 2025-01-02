@@ -15,9 +15,9 @@
 
 #pragma once
 
-#include <iostream>
-#include <iomanip>
-#include <windows.h>
+#include <iostream> // for console manipulation
+#include <fstream> // for file manipulation
+#include <windows.h> // for color manipulation
 #include "Constants.h";
 #include "HelperFunctions.h";
 #include "UserInterface.h";
@@ -29,3 +29,5 @@ bool isMoveValid(unsigned x, unsigned y);
 bool hasValidMoveForPlayer(unsigned x, unsigned y);
 void playTurn(unsigned x, unsigned y);
 void calculateScore(unsigned x, unsigned y, int& score);
+int serializeLastTurn();
+int deserializeLastGame();

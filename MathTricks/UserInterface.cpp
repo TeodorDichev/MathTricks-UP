@@ -44,7 +44,7 @@ void mathTricks() {
 
 void mainMenu() {
     std::cout << "Main menu\n\n" <<
-        "Press n for a new game, press c to continue, press q to quit.\n" <<
+        "Press n for a new game, press c to continue last game, press q to quit.\n" <<
         "The game is played by entering the coordinates of the tile you want to move to.\n" <<
         "The game finishes when one of the players has no more valid moves.\n" <<
         "The player with the greater score is the winner. Good luck!\n\n";
@@ -65,8 +65,9 @@ void mainMenu() {
         }
         else if (*input == CONTINUE_GAME_SYMBOL)
         {
-            newGameMenu(); // TO DO
-            return;
+            if (deserializeLastGame() == -1)
+                std::cout << "Unable to load last game\n";
+            else return;
         }
         else
             std::cout << "Invalid input, please try again\n";
@@ -98,9 +99,10 @@ void newGameMenu() {
         else
         {
             system(CLEAR_CONSOLE_CMD);
-            fillBoard(width, height); // Correctly passing width (x) and height (y)
+            fillBoard(width, height);
             printBoard(width, height);
-            printNextTurn(0, 0, 0, width - 1, height - 1, 0, true); // Adjusted to use correct board dimensions
+            serializeLastTurn(); // initial save
+            printNextTurn(0, 0, 0, width - 1, height - 1, 0, true); // initial turn
             return;
         }
 

@@ -15,8 +15,7 @@
 
 #pragma once
 
-#include <iostream>
-#include <iomanip>
+#include <iostream> // for console manipulation
 #include "Constants.h"
 #include "HelperFunctions.h"
 #include "Board.h"
