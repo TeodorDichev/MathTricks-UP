@@ -113,11 +113,11 @@ void printNextTurn(unsigned p1CurrCellX, unsigned p1CurrCellY, int p1CurrScore,
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
     SetConsoleTextAttribute(hConsole, FIRST_PLAYER_COLOR);
-    std::cout << "Player 1 is currently on [" << p1CurrCellY << ", " << p1CurrCellX
+    std::cout << "Player 1 is currently on [" << p1CurrCellX << ", " << p1CurrCellY
         << "], and has " << p1CurrScore << " points\n";
 
     SetConsoleTextAttribute(hConsole, SECOND_PLAYER_COLOR);
-    std::cout << "Player 2 is currently on [" << p2CurrCellY << ", " << p2CurrCellX
+    std::cout << "Player 2 is currently on [" << p2CurrCellX << ", " << p2CurrCellY
         << "], and has " << p2CurrScore << " points\n";
 
     // In order for the game to be fair we wait for the second player to complete their turn if they have a valid move
@@ -138,14 +138,14 @@ void printNextTurn(unsigned p1CurrCellX, unsigned p1CurrCellY, int p1CurrScore,
         std::cout << "Waiting for player 2...\n";
     }
 
-    std::cout << "Row: ";
-    std::cin.getline(input, MAX_SIZE);
-    y = myAtoi(input);
-    std::cin.clear();
-
-    std::cout << "Col: ";
+    std::cout << "X: ";
     std::cin.getline(input, MAX_SIZE);
     x = myAtoi(input);
+    std::cin.clear();
+
+    std::cout << "Y: ";
+    std::cin.getline(input, MAX_SIZE);
+    y = myAtoi(input);
     std::cin.clear();
 
     // Repeat until valid move
@@ -153,14 +153,14 @@ void printNextTurn(unsigned p1CurrCellX, unsigned p1CurrCellY, int p1CurrScore,
     {
         std::cout << "Invalid input, please try again\n";
 
-        std::cout << "Row: ";
-        std::cin.getline(input, MAX_SIZE);
-        y = myAtoi(input);
-        std::cin.clear();
-
-        std::cout << "Col: ";
+        std::cout << "X: ";
         std::cin.getline(input, MAX_SIZE);
         x = myAtoi(input);
+        std::cin.clear();
+
+        std::cout << "Y: ";
+        std::cin.getline(input, MAX_SIZE);
+        y = myAtoi(input);
         std::cin.clear();
     }
 

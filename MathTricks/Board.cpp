@@ -17,7 +17,7 @@
 
 char** operations;
 unsigned** visited;
-unsigned** values;
+int** values;
 
 unsigned boardWidth;
 unsigned boardHeight;
@@ -45,25 +45,23 @@ void fillBoard(unsigned width, unsigned height) {
 
     std::srand(std::time(0));
 
-    // Fix: Allocate arrays with the correct dimensions (height x width)
+    //Allocate arrays with the correct dimensions (height x width)
     visited = new unsigned* [height];
-    values = new unsigned* [height];
+    values = new int* [height];
     operations = new char* [height];
 
     for (unsigned i = 0; i < height; ++i) {
         visited[i] = new unsigned[width]; // Allocate each row
         operations[i] = new char[width]; // Allocate each row
-        values[i] = new unsigned[width]; // Allocate each row
+        values[i] = new int[width]; // Allocate each row
     }
 
-    // Initialize visited array with 0
     for (unsigned i = 0; i < height; ++i)
         for (unsigned j = 0; j < width; ++j)
             visited[i][j] = 0;
 
-    // Corrected loop order and indexing to reflect proper dimensions
-    for (unsigned y = 0; y < height; ++y) {  // y is height, going from top to bottom
-        for (unsigned x = 0; x < width; ++x) { // x is width, going from left to right
+    for (unsigned y = 0; y < height; ++y) {
+        for (unsigned x = 0; x < width; ++x) {
             if (y == 0 && x == 0) {
                 visited[y][x] = FIRST_PLAYER_COLOR;
                 operations[y][x] = ' ';
@@ -191,27 +189,22 @@ void deleteBoardMemory(unsigned height) {
 
 bool isMoveValid(unsigned x, unsigned y) {
     // Directions for moving in 8 directions (horizontal, vertical, and diagonal)
-    int dx[] = { -1, -1, -1, 0, 0, 1, 1, 1 };
-    int dy[] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+    int dx[] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+    int dy[] = { -1, -1, -1, 0, 0, 1, 1, 1 };
+
     unsigned currX = isFirstPlayer ? p1CurrCellX : p2CurrCellX;
     unsigned currY = isFirstPlayer ? p1CurrCellY : p2CurrCellY;
 
-    // Check if the move is within bounds
-    if (x >= boardWidth || y >= boardHeight) {
+    if (x >= boardWidth || y >= boardHeight)
         return false;
-    }
 
-    // Check if the cell has already been visited
-    if (visited[y][x] != 0) {
+    if (visited[y][x] != 0)
         return false;
-    }
 
     // Check if the move is to an adjacent cell
-    for (int i = 0; i < 8; ++i) {
-        if (x == currX + dx[i] && y == currY + dy[i]) {
+    for (int i = 0; i < 8; ++i)
+        if (x == currX + dx[i] && y == currY + dy[i])
             return true;
-        }
-    }
 
     return false;
 }
@@ -226,9 +219,8 @@ bool hasValidMoveForPlayer(unsigned x, unsigned y) {
         int ny = y + dy[i];
 
         // Check if the neighboring cell is within bounds and not visited
-        if (nx >= 0 && nx < boardWidth && ny >= 0 && ny < boardHeight && visited[ny][nx] == 0) {
+        if (nx >= 0 && nx < boardWidth && ny >= 0 && ny < boardHeight && visited[ny][nx] == 0)
             return true;
-        }
     }
     return false;
 }
