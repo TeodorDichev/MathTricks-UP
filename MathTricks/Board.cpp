@@ -3,7 +3,7 @@
 * Solution to course project # 2
 * Introduction to programming course
 * Faculty of Mathematics and Informatics of Sofia University
-* Winter semester 2023/2024
+* Winter semester 2024/2025
 *
 * @author Teodor Dichev
 * @idnumber 7MI0600424
@@ -45,73 +45,82 @@ void fillBoard(unsigned cols, unsigned rows) {
 
 	std::srand(std::time(0));
 
-	//Allocate arrays with the correct dimensions (cols x rows)
+	// Memory initialization
 	visited = new unsigned* [rows];
 	values = new int* [rows];
 	operations = new char* [rows];
 
 	for (unsigned i = 0; i < rows; ++i) {
-		visited[i] = new unsigned[cols]; // Allocate each row
-		operations[i] = new char[cols]; // Allocate each row
-		values[i] = new int[cols]; // Allocate each row
+		visited[i] = new unsigned[cols];
+		operations[i] = new char[cols];
+		values[i] = new int[cols];
 	}
 
 	for (unsigned i = 0; i < rows; ++i)
-		for (unsigned j = 0; j < cols; ++j)
+		for (unsigned j = 0; j < cols; ++j) {
 			visited[i][j] = 0;
+			operations[i][j] = ' ';
+			values[i][j] = 0;
+		}
 
-	for (unsigned y = 0; y < rows; ++y) {
-		for (unsigned x = 0; x < cols; ++x) {
-			if (y == 0 && x == 0) {
-				visited[y][x] = FIRST_PLAYER_COLOR;
-				operations[y][x] = ' ';
-				values[y][x] = 0;
-				continue;
-			}
-			else if (y == rows - 1 && x == cols - 1) {
-				visited[y][x] = SECOND_PLAYER_COLOR;
-				operations[y][x] = ' ';
-				values[y][x] = 0;
-				continue;
-			}
+	visited[0][0] = FIRST_PLAYER_COLOR;
+	visited[rows - 1][cols - 1] = SECOND_PLAYER_COLOR;
+
+	// Seeding the necessary operation
+	if (!addition) {
+		randomlyPlaceOperation('+', std::rand() % 10);
+		addition = true;
+	}
+	if (!subtraction) {
+		randomlyPlaceOperation('-', std::rand() % ((cols + rows) / VALUE_DIVISOR) + 1);
+		subtraction = true;
+	}
+	if (!divByTwo) {
+		randomlyPlaceOperation('/', 2);
+		divByTwo = true;
+	}
+	if (!multByTwo) {
+		randomlyPlaceOperation('*', 2);
+		multByTwo = true;
+	}
+	if (!multByZero) {
+		randomlyPlaceOperation('*', 0);
+		multByZero = true;
+	}
+
+	// Seeding the rest of the operations
+	for (unsigned i = 0; i < rows; ++i) {
+		for (unsigned j = 0; j < cols; ++j) {
 
 			char op = possibleOperations[std::rand() % possibleOperationsSize];
-			operations[y][x] = op;
+			if (operations[i][j] != ' ' || (i == 0 && j == 0) || (i == rows - 1 && j == cols - 1))
+				continue;
+
+			operations[i][j] = op;
 
 			if (op == '/')
-			{
-				if (!divByTwo) {
-					values[y][x] = 2;
-					divByTwo = true;
-				}
-				else
-					values[y][x] = std::rand() % ((cols + rows) / VALUE_DIVISOR) + 1; // So as to not have /0
-			}
+				values[i][j] = std::rand() % ((cols + rows) / VALUE_DIVISOR) + 1; // Avoid /0
 			else if (op == '-')
-			{
-				values[y][x] = std::rand() % ((cols + rows) / VALUE_DIVISOR) + 1; // So as to not have -0
-				subtraction = true;
-			}
-			else if (op == '*') {
-				if (!multByZero)
-				{
-					values[y][x] = 0;
-					multByZero = true;
-				}
-				else if (!multByTwo)
-				{
-					values[y][x] = 2;
-					multByTwo = true;
-				}
-				else
-					values[y][x] = std::rand() % ((cols + rows) / VALUE_DIVISOR + 1);
-			}
+				values[i][j] = std::rand() % ((cols + rows) / VALUE_DIVISOR) + 1; // Avoid -0
+			else if (op == '*')
+				values[i][j] = std::rand() % ((cols + rows) / VALUE_DIVISOR + 1);
 			else
-			{
-				values[y][x] = std::rand() % 10;
-				addition = true;
-			}
+				values[i][j] = std::rand() % 10;
 		}
+	}
+}
+
+void randomlyPlaceOperation(char op, int val) {
+	while (true) {
+		unsigned randY = std::rand() % boardRows;
+		unsigned randX = std::rand() % boardCols;
+
+		if (operations[randY][randX] != ' ' || (randY == 0 && randX == 0) || (randY == boardRows - 1 && randX == boardCols - 1))
+			continue;
+
+		operations[randY][randX] = op;
+		values[randY][randX] = val;
+		break;
 	}
 }
 
@@ -370,7 +379,7 @@ int deserializeLastGame() {
 						while (c == '\n')
 							c = inputFile.get();
 
-						if (charToDigit(c) < 0) 
+						if (charToDigit(c) < 0)
 							return -1;
 						else
 							visited[i][j] = charToDigit(c);
