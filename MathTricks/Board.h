@@ -22,13 +22,13 @@
 #include "HelperFunctions.h";
 #include "UserInterface.h";
 
-void randomlyPlaceOperation(char op, int val);
-void printBoard(unsigned cols, unsigned rows);
-void fillBoard(unsigned cols, unsigned rows);
-void deleteBoardMemory(unsigned rows);
-bool isMoveValid(unsigned x, unsigned y);
-bool hasValidMoveForPlayer(unsigned x, unsigned y);
-void playTurn(unsigned x, unsigned y);
-void calculateScore(unsigned x, unsigned y, int& score);
 int serializeLastTurn();
+void deleteBoardMemory();
 int deserializeLastGame();
+void playTurn(unsigned row, unsigned col);
+bool isMoveValid(unsigned row, unsigned col);
+void fillBoard(unsigned cols, unsigned rows);
+void randomlyPlaceOperation(char op, int val);
+void printBoard(unsigned rows, unsigned cols);
+bool hasValidMoveForPlayer(unsigned row, unsigned col);
+void calculateScore(unsigned row, unsigned col, int& score);

@@ -20,9 +20,10 @@
 #include "HelperFunctions.h"
 #include "Board.h"
 
-void mathTricks();
+
 void mainMenu();
+void mathTricks();
 void newGameMenu();
-void printNextTurn(unsigned p1CurrCellX, unsigned p1CurrCellY, int p1CurrScore,
-    unsigned p2CurrCellX, unsigned p2CurrCellY, int p2CurrScore, bool isFirstPlayer);
 void printWinScreen(int p1CurrScore, int p2CurrScore);
+void printNextTurn(unsigned p1CurrRow, unsigned p1CurrCol, int p1CurrScore,
+    unsigned p2CurrRow, unsigned p2CurrCol, int p2CurrScore, bool isFirstPlayer);

@@ -17,8 +17,12 @@
 
 #include "Constants.h";
 
-unsigned getLength(const char* text);
 int charToDigit(char ch);
+double myAbs(double number);
+int myAtoi(const char* str);
+double mySqrt(double number);
+unsigned getLength(const char* text);
+unsigned myPow(unsigned base, unsigned power);
 bool containsOnlyNumericalChars(const char* str);
-unsigned myAtoi(const char* str);
 int myStrCmp(const char* first, const char* second);
+unsigned euclideanProxiScore(unsigned currRow, unsigned currCol, unsigned rows, unsigned cols);

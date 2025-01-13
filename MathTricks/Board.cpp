@@ -22,256 +22,14 @@ int** values;
 unsigned boardCols;
 unsigned boardRows;
 
-unsigned p1CurrCellX;
-unsigned p1CurrCellY;
-unsigned p2CurrCellX;
-unsigned p2CurrCellY;
+unsigned p1CurrRow;
+unsigned p1CurrCol;
+unsigned p2CurrRow;
+unsigned p2CurrCol;
 
 int p1CurrScore;
 int p2CurrScore;
 bool isFirstPlayer;
-
-void fillBoard(unsigned cols, unsigned rows) {
-	bool addition = false, subtraction = false, multByZero = false, multByTwo = false, divByTwo = false;
-	p1CurrCellX = 0;
-	p1CurrCellY = 0;
-	p2CurrCellX = cols - 1;
-	p2CurrCellY = rows - 1;
-	p1CurrScore = 0;
-	p2CurrScore = 0;
-	isFirstPlayer = true;
-	boardCols = cols;
-	boardRows = rows;
-
-	std::srand(std::time(0));
-
-	// Memory initialization
-	visited = new unsigned* [rows];
-	values = new int* [rows];
-	operations = new char* [rows];
-
-	for (unsigned i = 0; i < rows; ++i) {
-		visited[i] = new unsigned[cols];
-		operations[i] = new char[cols];
-		values[i] = new int[cols];
-	}
-
-	for (unsigned i = 0; i < rows; ++i)
-		for (unsigned j = 0; j < cols; ++j) {
-			visited[i][j] = 0;
-			operations[i][j] = ' ';
-			values[i][j] = 0;
-		}
-
-	visited[0][0] = FIRST_PLAYER_COLOR;
-	visited[rows - 1][cols - 1] = SECOND_PLAYER_COLOR;
-
-	// Seeding the necessary operation
-	if (!addition) {
-		randomlyPlaceOperation('+', std::rand() % 10);
-		addition = true;
-	}
-	if (!subtraction) {
-		randomlyPlaceOperation('-', std::rand() % ((cols + rows) / VALUE_DIVISOR) + 1);
-		subtraction = true;
-	}
-	if (!divByTwo) {
-		randomlyPlaceOperation('/', 2);
-		divByTwo = true;
-	}
-	if (!multByTwo) {
-		randomlyPlaceOperation('*', 2);
-		multByTwo = true;
-	}
-	if (!multByZero) {
-		randomlyPlaceOperation('*', 0);
-		multByZero = true;
-	}
-
-	// Seeding the rest of the operations
-	for (unsigned i = 0; i < rows; ++i) {
-		for (unsigned j = 0; j < cols; ++j) {
-
-			char op = possibleOperations[std::rand() % possibleOperationsSize];
-			if (operations[i][j] != ' ' || (i == 0 && j == 0) || (i == rows - 1 && j == cols - 1))
-				continue;
-
-			operations[i][j] = op;
-
-			if (op == '/')
-				values[i][j] = std::rand() % ((cols + rows) / VALUE_DIVISOR) + 1; // Avoid /0
-			else if (op == '-')
-				values[i][j] = std::rand() % ((cols + rows) / VALUE_DIVISOR) + 1; // Avoid -0
-			else if (op == '*')
-				values[i][j] = std::rand() % ((cols + rows) / VALUE_DIVISOR + 1);
-			else
-				values[i][j] = std::rand() % 10;
-		}
-	}
-}
-
-void randomlyPlaceOperation(char op, int val) {
-	while (true) {
-		unsigned randY = std::rand() % boardRows;
-		unsigned randX = std::rand() % boardCols;
-
-		if (operations[randY][randX] != ' ' || (randY == 0 && randX == 0) || (randY == boardRows - 1 && randX == boardCols - 1))
-			continue;
-
-		operations[randY][randX] = op;
-		values[randY][randX] = val;
-		break;
-	}
-}
-
-void printBoard(unsigned cols, unsigned rows) {
-	system(CLEAR_CONSOLE_CMD);
-
-	for (unsigned i = 0; i < rows; ++i) {
-		for (unsigned j = 0; j < cols; ++j)
-			std::cout << "+--+ ";
-
-		std::cout << "\n";
-
-		for (unsigned j = 0; j < cols; ++j) {
-			std::cout << "|";
-
-			HANDLE  hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
-			if (visited[i][j])
-				SetConsoleTextAttribute(hConsole, DEFAULT_COLOR + visited[i][j] * 16);
-			else
-				SetConsoleTextAttribute(hConsole, DEFAULT_COLOR);
-
-			if (i == p1CurrCellY && j == p1CurrCellX) {
-				SetConsoleTextAttribute(hConsole, 6 + FIRST_PLAYER_COLOR * 16);
-				std::cout << operations[i][j];
-				std::cout << values[i][j];
-			}
-			else if (i == p2CurrCellY && j == p2CurrCellX) {
-				SetConsoleTextAttribute(hConsole, 6 + SECOND_PLAYER_COLOR * 16);
-				std::cout << operations[i][j];
-				std::cout << values[i][j];
-			}
-			else {
-				std::cout << operations[i][j];
-				std::cout << values[i][j];
-			}
-
-			SetConsoleTextAttribute(hConsole, DEFAULT_COLOR);
-			std::cout << "| ";
-		}
-
-		std::cout << "\n";
-	}
-
-	for (unsigned j = 0; j < cols; ++j)
-		std::cout << "+--+ ";
-	std::cout << "\n";
-}
-
-void deleteBoardMemory(unsigned rows) {
-	if (visited) {
-		for (unsigned i = 0; i < rows; ++i)
-			delete[] visited[i];
-
-		delete[] visited;
-		visited = nullptr;
-	}
-
-	if (operations) {
-		for (unsigned i = 0; i < rows; ++i)
-			delete[] operations[i];
-
-		delete[] operations;
-		operations = nullptr;
-	}
-
-	if (values) {
-		for (unsigned i = 0; i < rows; ++i)
-			delete[] values[i];
-
-		delete[] values;
-		values = nullptr;
-	}
-}
-
-bool isMoveValid(unsigned x, unsigned y) {
-	// Directions for moving in 8 directions (horizontal, vertical, and diagonal)
-	int dx[] = { -1, 0, 1, -1, 1, -1, 0, 1 };
-	int dy[] = { -1, -1, -1, 0, 0, 1, 1, 1 };
-
-	unsigned currX = isFirstPlayer ? p1CurrCellX : p2CurrCellX;
-	unsigned currY = isFirstPlayer ? p1CurrCellY : p2CurrCellY;
-
-	if (x >= boardCols || y >= boardRows)
-		return false;
-
-	if (visited[y][x] != 0)
-		return false;
-
-	// Check if the move is to an adjacent cell
-	for (int i = 0; i < 8; ++i)
-		if (x == currX + dx[i] && y == currY + dy[i])
-			return true;
-
-	return false;
-}
-
-bool hasValidMoveForPlayer(unsigned x, unsigned y) {
-	// Directions for moving in 8 directions (horizontal, vertical, and diagonal)
-	int dx[] = { -1, 0, 1, -1, 1, -1, 0, 1 };
-	int dy[] = { -1, -1, -1, 0, 0, 1, 1, 1 };
-
-	for (int i = 0; i < 8; ++i) {
-		int nx = x + dx[i];
-		int ny = y + dy[i];
-
-		// Check if the neighboring cell is within bounds and not visited
-		if (nx >= 0 && nx < boardCols && ny >= 0 && ny < boardRows && visited[ny][nx] == 0)
-			return true;
-	}
-	return false;
-}
-
-void playTurn(unsigned x, unsigned y) {
-	if (isFirstPlayer) {
-		p1CurrCellX = x;
-		p1CurrCellY = y;
-		visited[y][x] = FIRST_PLAYER_COLOR;
-		calculateScore(x, y, p1CurrScore);
-	}
-	else {
-		p2CurrCellX = x;
-		p2CurrCellY = y;
-		visited[y][x] = SECOND_PLAYER_COLOR;
-		calculateScore(x, y, p2CurrScore);
-	}
-
-	isFirstPlayer = !isFirstPlayer;
-	serializeLastTurn();
-	printBoard(boardCols, boardRows);
-	printNextTurn(p1CurrCellX, p1CurrCellY, p1CurrScore, p2CurrCellX, p2CurrCellY, p2CurrScore, isFirstPlayer);
-}
-
-void calculateScore(unsigned x, unsigned y, int& score) {
-	switch (operations[y][x]) {
-	case '+':
-		score += values[y][x];
-		return;
-	case '-':
-		score -= values[y][x];
-		return;
-	case '*':
-		score *= values[y][x];
-		return;
-	case '/':
-		score /= values[y][x];
-		return;
-	default:
-		return;
-	}
-}
 
 int serializeLastTurn() {
 	std::ofstream outputFile("lastGame.txt");
@@ -281,13 +39,13 @@ int serializeLastTurn() {
 		outputFile << boardRows << '\n';
 
 		outputFile << "\nplayer1\n";
-		outputFile << p1CurrCellX << '\n';
-		outputFile << p1CurrCellY << '\n';
+		outputFile << p1CurrRow << '\n';
+		outputFile << p1CurrCol << '\n';
 		outputFile << p1CurrScore << '\n';
 
 		outputFile << "\nplayer2\n";
-		outputFile << p2CurrCellX << '\n';
-		outputFile << p2CurrCellY << '\n';
+		outputFile << p2CurrRow << '\n';
+		outputFile << p2CurrCol << '\n';
 		outputFile << p2CurrScore << '\n';
 
 		outputFile << "\nisFirstPlayer\n";
@@ -321,6 +79,32 @@ int serializeLastTurn() {
 	return -1;
 }
 
+void deleteBoardMemory() {
+	if (visited) {
+		for (unsigned i = 0; i < boardRows; ++i)
+			delete[] visited[i];
+
+		delete[] visited;
+		visited = nullptr;
+	}
+
+	if (operations) {
+		for (unsigned i = 0; i < boardRows; ++i)
+			delete[] operations[i];
+
+		delete[] operations;
+		operations = nullptr;
+	}
+
+	if (values) {
+		for (unsigned i = 0; i < boardRows; ++i)
+			delete[] values[i];
+
+		delete[] values;
+		values = nullptr;
+	}
+}
+
 int deserializeLastGame() {
 	std::ifstream inputFile("lastGame.txt");
 	char input[MAX_SIZE_INPUT]; // using static memory -> auto clear after method
@@ -335,17 +119,17 @@ int deserializeLastGame() {
 			}
 			if (!myStrCmp(input, "player1")) {
 				inputFile.getline(input, MAX_SIZE_INPUT);
-				p1CurrCellX = atoi(input);
+				p1CurrRow = atoi(input);
 				inputFile.getline(input, MAX_SIZE_INPUT);
-				p1CurrCellY = atoi(input);
+				p1CurrCol = atoi(input);
 				inputFile.getline(input, MAX_SIZE_INPUT);
 				p1CurrScore = atoi(input);
 			}
 			if (!myStrCmp(input, "player2")) {
 				inputFile.getline(input, MAX_SIZE_INPUT);
-				p2CurrCellX = atoi(input);
+				p2CurrRow = atoi(input);
 				inputFile.getline(input, MAX_SIZE_INPUT);
-				p2CurrCellY = atoi(input);
+				p2CurrCol = atoi(input);
 				inputFile.getline(input, MAX_SIZE_INPUT);
 				p2CurrScore = atoi(input);
 			}
@@ -405,9 +189,250 @@ int deserializeLastGame() {
 
 		inputFile.close();
 		printBoard(boardCols, boardRows);
-		printNextTurn(p1CurrCellX, p1CurrCellY, p1CurrScore, p2CurrCellX, p2CurrCellY, p2CurrScore, isFirstPlayer);
+		printNextTurn(p1CurrRow, p1CurrCol, p1CurrScore, p2CurrRow, p2CurrCol, p2CurrScore, isFirstPlayer);
 		return 0;
 	}
 	else
 		return -1;
+}
+
+void playTurn(unsigned row, unsigned col) {
+	if (isFirstPlayer) {
+		p1CurrRow = row;
+		p1CurrCol = col;
+		visited[row][col] = FIRST_PLAYER_COLOR;
+		calculateScore(row, col, p1CurrScore);
+	}
+	else {
+		p2CurrRow = row;
+		p2CurrCol = col;
+		visited[row][col] = SECOND_PLAYER_COLOR;
+		calculateScore(row, col, p2CurrScore);
+	}
+
+	isFirstPlayer = !isFirstPlayer;
+	serializeLastTurn();
+	printBoard(boardRows, boardCols);
+	printNextTurn(p1CurrRow, p1CurrCol, p1CurrScore, p2CurrRow, p2CurrCol, p2CurrScore, isFirstPlayer);
+}
+
+bool isMoveValid(unsigned row, unsigned col) {
+	if (row < 0 || col < 0 || row >= boardRows || col >= boardCols)
+		return false;
+
+	if (visited[row][col] != 0)
+		return false;
+
+	// Directions for moving in 8 directions (horizontal, vertical, and diagonal)
+	int drows[] = { -1, -1, -1, 0, 0, 1, 1, 1 };
+	int dcols[] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+
+	unsigned currRow = isFirstPlayer ? p1CurrRow : p2CurrRow;
+	unsigned currCol = isFirstPlayer ? p1CurrCol : p2CurrCol;
+
+	// Check if the move is to an adjacent cell
+	for (int i = 0; i < 8; ++i)
+		if (row == currRow + drows[i] && col == currCol + dcols[i])
+			return true;
+
+	return false;
+}
+
+void fillBoard(unsigned rows, unsigned cols) {
+	bool addition = false, subtraction = false, multByZero = false, multByTwo = false, divByTwo = false;
+	p1CurrRow = 0;
+	p1CurrCol = 0;
+	p2CurrRow = rows - 1;
+	p2CurrCol = cols - 1;
+	p1CurrScore = 0;
+	p2CurrScore = 0;
+	isFirstPlayer = true;
+	boardRows = rows;
+	boardCols = cols;
+	
+	std::srand(std::time(0));
+
+	// Memory initialization
+	visited = new unsigned* [rows];
+	values = new int* [rows];
+	operations = new char* [rows];
+
+	for (unsigned i = 0; i < rows; ++i) {
+		visited[i] = new unsigned[cols];
+		operations[i] = new char[cols];
+		values[i] = new int[cols];
+	}
+
+	for (unsigned i = 0; i < rows; ++i)
+		for (unsigned j = 0; j < cols; ++j) {
+			visited[i][j] = 0;
+			operations[i][j] = ' ';
+			values[i][j] = 0;
+		}
+
+	visited[0][0] = FIRST_PLAYER_COLOR;
+	visited[rows - 1][cols - 1] = SECOND_PLAYER_COLOR;
+
+	// Seeding the necessary operation
+	if (!addition) {
+		randomlyPlaceOperation(ADD_SYMBOL, -1); // To place value correctly must know indexes
+		addition = true;
+	}
+	if (!subtraction) {
+		randomlyPlaceOperation(SUB_SYMBOL, -1); // To place value correctly must know indexes
+		subtraction = true;
+	}
+	if (!divByTwo) {
+		randomlyPlaceOperation(DIV_SYMBOL, 2);
+		divByTwo = true;
+	}
+	if (!multByTwo) {
+		randomlyPlaceOperation(MUL_SYMBOL, 2);
+		multByTwo = true;
+	}
+	if (!multByZero) {
+		randomlyPlaceOperation(MUL_SYMBOL, 0);
+		multByZero = true;
+	}
+
+	// Seeding the rest of the operations
+	for (unsigned i = 0; i < rows; ++i) {
+		for (unsigned j = 0; j < cols; ++j) {
+
+			char op = possibleOperations[std::rand() % possibleOperationsSize];
+			if (operations[i][j] != ' ' || (i == 0 && j == 0) || (i == rows - 1 && j == cols - 1))
+				continue;
+
+			operations[i][j] = op;
+
+			// Random values increased when approaching the center
+			unsigned coefficient = (rows + cols) / VALUE_DIVISOR;
+			if (op == ADD_SYMBOL)
+				values[i][j] = (std::rand() % (coefficient + 1)) + coefficient * euclideanProxiScore(i, j, rows, cols);
+			if (op == SUB_SYMBOL)
+				values[i][j] = (std::rand() % (coefficient + 1)) + coefficient * euclideanProxiScore(i, j, rows, cols);
+			if (op == DIV_SYMBOL)
+				values[i][j] = (std::rand() % (coefficient + 1)) + euclideanProxiScore(i, j, rows, cols) + 1;
+			if (op == MUL_SYMBOL)
+				values[i][j] = (std::rand() % (coefficient + 1)) + euclideanProxiScore(i, j, rows, cols);
+		}
+	}
+}
+
+void randomlyPlaceOperation(char op, int val) {
+	while (true) {
+		unsigned randRow = std::rand() % boardRows;
+		unsigned randCol = std::rand() % boardCols;
+
+		if (operations[randRow][randCol] != ' ' || (randRow == 0 && randCol == 0) || (randRow == boardRows - 1 && randCol == boardCols - 1))
+			continue;
+
+		operations[randRow][randCol] = op;
+
+		if (val == -1) {
+			unsigned coefficient = (randRow + randCol) / VALUE_DIVISOR;
+			values[randRow][randCol] = std::rand() % (coefficient + 1) + 
+				coefficient * euclideanProxiScore(randRow, randCol, boardRows, boardCols);
+		}
+		else {
+			values[randRow][randCol] = val;
+		}
+
+		break;
+	}
+}
+
+void printBoard(unsigned rows, unsigned cols) {
+	system(CLEAR_CONSOLE_CMD);
+
+	std::cout << "   ";
+	for (unsigned i = 0; i < cols; ++i) {
+		if (i < 10)
+			std::cout << " ";
+		std::cout << i << ".  ";
+	}
+
+	std::cout << "\n";
+
+	for (unsigned i = 0; i < rows; ++i) {
+		std::cout << "   ";
+		for (unsigned j = 0; j < cols; ++j)
+			std::cout << "+--+ ";
+		std::cout << "\n";
+
+		if (i < 10)
+			std::cout << " ";
+		std::cout << i << ".";
+
+		for (unsigned j = 0; j < cols; ++j) {
+			std::cout << "|";
+
+			HANDLE  hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+			if (visited[i][j])
+				SetConsoleTextAttribute(hConsole, DEFAULT_COLOR + visited[i][j] * 16);
+			else
+				SetConsoleTextAttribute(hConsole, DEFAULT_COLOR);
+
+			if (i == p1CurrRow && j == p1CurrCol) {
+				SetConsoleTextAttribute(hConsole, 6 + FIRST_PLAYER_COLOR * 16);
+				std::cout << operations[i][j];
+				std::cout << values[i][j];
+			}
+			else if (i == p2CurrRow && j == p2CurrCol) {
+				SetConsoleTextAttribute(hConsole, 6 + SECOND_PLAYER_COLOR * 16);
+				std::cout << operations[i][j];
+				std::cout << values[i][j];
+			}
+			else {
+				std::cout << operations[i][j];
+				std::cout << values[i][j];
+			}
+
+			SetConsoleTextAttribute(hConsole, DEFAULT_COLOR);
+			std::cout << "| ";
+		}
+
+		std::cout << "\n";
+	}
+
+	std::cout << "   ";
+	for (unsigned j = 0; j < cols; ++j)
+		std::cout << "+--+ ";
+	std::cout << "\n";
+}
+
+bool hasValidMoveForPlayer(unsigned row, unsigned col) {
+	// Directions for moving in 8 directions (horizontal, vertical, and diagonal)
+	int drows[] = { -1, -1, -1, 0, 0, 1, 1, 1 };
+	int dcols[] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+
+	for (int i = 0; i < 8; ++i) {
+		int nrow = row + drows[i];
+		int ncol = col + dcols[i];
+
+		// Check if the neighboring cell is within bounds and not visited
+		if (nrow >= 0 && nrow < boardRows && ncol >= 0 && ncol < boardCols && visited[nrow][ncol] == 0)
+			return true;
+	}
+	return false;
+}
+
+void calculateScore(unsigned row, unsigned col, int& score) {
+	switch (operations[row][col]) {
+	case ADD_SYMBOL:
+		score += values[row][col];
+		return;
+	case SUB_SYMBOL:
+		score -= values[row][col];
+		return;
+	case MUL_SYMBOL:
+		score *= values[row][col];
+		return;
+	case DIV_SYMBOL:
+		score /= values[row][col];
+		return;
+	default:
+		return;
+	}
 }
