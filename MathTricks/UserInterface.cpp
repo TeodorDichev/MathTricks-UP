@@ -130,6 +130,8 @@ void printWinScreen(int p1CurrScore, int p2CurrScore) {
     SetConsoleTextAttribute(hConsole, DEFAULT_COLOR);
     char c;
     std::cin >> c;
+    std::cin.clear();
+    std::cin.ignore(); // to ignore the key so that mainMenu does not throw exception
     system(CLEAR_CONSOLE_CMD);
     // At the end of any game deleting board memory so as to not allow memory leaks
     deleteBoardMemory();
@@ -150,7 +152,7 @@ void printNextTurn(unsigned p1CurrRow, unsigned p1CurrCol, int p1CurrScore,
         << "], and has " << p2CurrScore << " points\n";
 
     // In order for the game to be fair we wait for the second player to complete their turn if they have a valid move
-    // The boolean fields are there for readibility
+    // The boolean fields are there for readability
     bool p1HasNoValidMoves = !hasValidMoveForPlayer(p1CurrRow, p1CurrCol);
     bool p2HasNoValidMoves = !hasValidMoveForPlayer(p2CurrRow, p2CurrCol);
 

@@ -188,7 +188,7 @@ int deserializeLastGame() {
 		}
 
 		inputFile.close();
-		printBoard(boardCols, boardRows);
+		printBoard(boardRows, boardCols);
 		printNextTurn(p1CurrRow, p1CurrCol, p1CurrScore, p2CurrRow, p2CurrCol, p2CurrScore, isFirstPlayer);
 		return 0;
 	}
