@@ -108,9 +108,11 @@ void deleteBoardMemory() {
 int deserializeLastGame() {
 	std::ifstream inputFile("lastGame.txt");
 	char input[MAX_SIZE_INPUT]; // using static memory -> auto clear after method
+	bool isEmptyFile = true;
 
 	if (inputFile.is_open()) {
 		while (inputFile.getline(input, MAX_SIZE_INPUT)) {
+			isEmptyFile = false;
 			if (!myStrCmp(input, "board")) {
 				inputFile.getline(input, MAX_SIZE_INPUT);
 				boardCols = atoi(input);
@@ -186,6 +188,9 @@ int deserializeLastGame() {
 				}
 			}
 		}
+
+		if (isEmptyFile) 
+			return -1;
 
 		inputFile.close();
 		printBoard(boardRows, boardCols);
